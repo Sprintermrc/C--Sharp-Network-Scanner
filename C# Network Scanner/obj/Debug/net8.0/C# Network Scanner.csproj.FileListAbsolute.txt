@@ -1,0 +1,14 @@
+c:\Users\viriv\Desktop\C# Network Scanner\C# Network Scanner\obj\Debug\net8.0\C# Network Scanner.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\viriv\Desktop\C# Network Scanner\C# Network Scanner\obj\Debug\net8.0\C# Network Scanner.AssemblyInfoInputs.cache
+c:\Users\viriv\Desktop\C# Network Scanner\C# Network Scanner\obj\Debug\net8.0\C# Network Scanner.AssemblyInfo.cs
+c:\Users\viriv\Desktop\C# Network Scanner\C# Network Scanner\obj\Debug\net8.0\C# Network Scanner.csproj.CoreCompileInputs.cache
+c:\Users\viriv\Desktop\C# Network Scanner\C# Network Scanner\bin\Debug\net8.0\C# Network Scanner.exe
+c:\Users\viriv\Desktop\C# Network Scanner\C# Network Scanner\bin\Debug\net8.0\C# Network Scanner.deps.json
+c:\Users\viriv\Desktop\C# Network Scanner\C# Network Scanner\bin\Debug\net8.0\C# Network Scanner.runtimeconfig.json
+c:\Users\viriv\Desktop\C# Network Scanner\C# Network Scanner\bin\Debug\net8.0\C# Network Scanner.dll
+c:\Users\viriv\Desktop\C# Network Scanner\C# Network Scanner\bin\Debug\net8.0\C# Network Scanner.pdb
+c:\Users\viriv\Desktop\C# Network Scanner\C# Network Scanner\obj\Debug\net8.0\C# Network Scanner.dll
+c:\Users\viriv\Desktop\C# Network Scanner\C# Network Scanner\obj\Debug\net8.0\refint\C# Network Scanner.dll
+c:\Users\viriv\Desktop\C# Network Scanner\C# Network Scanner\obj\Debug\net8.0\C# Network Scanner.pdb
+c:\Users\viriv\Desktop\C# Network Scanner\C# Network Scanner\obj\Debug\net8.0\C# Network Scanner.genruntimeconfig.cache
+c:\Users\viriv\Desktop\C# Network Scanner\C# Network Scanner\obj\Debug\net8.0\ref\C# Network Scanner.dll
