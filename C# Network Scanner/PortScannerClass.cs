@@ -1,3 +1,8 @@
+//Весь этот класс делает следующее:
+// Принимает айпи и диапазон портов, затем берет и на каждый порт открывает ~сокет~ (зачеркнуто) tcpClient с попыткой присоединиться.
+//Соответственно если соединение успешо - возвращает true и выводит порт в консоль, если нет - ловит ошибку SocketError.ConnectionRefused, возвращает false и ничего не делает (можно тоже выводить в консоль)
+
+
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -10,7 +15,8 @@ namespace network_util
 {
     public static class PortScannerClass
     {
-        public static void PortScanCutom(string ip, int minPort, int maxPort){
+        public static void PortScanCustom(string ip, int minPort, int maxPort)
+        {
             int returnCode = 0;
             try 
             {
@@ -30,6 +36,8 @@ namespace network_util
                 Console.WriteLine("Finished");
             }
         }
+
+
         public static int PortScanMain()
         {
             int returnCode = 0;
@@ -204,23 +212,15 @@ namespace network_util
             try
             {
                 // make a TCP based socket
-                socket = new Socket(AddressFamily.InterNetwork, SocketType
-                    .Stream, ProtocolType.Tcp);
+               // socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
                 // connect
-                await Task.Run(() => socket.Connect(Host, port));
-                // using(TcpClient tcpClient = new TcpClient())
-                // {
-                //     try 
-                //     {
-                //         tcpClient.Connect("127.0.0.1", 9081);
-                //         Console.WriteLine("Port open");
-                //     }   
-                //     catch (Exception) 
-                //     {
-                //     Console.WriteLine("Port closed");
-                //     }
-                // }
+                //await Task.Run(() => socket.ConnectAsync(Host, port));
+                using(TcpClient tcpClient = new TcpClient())
+                {   
+                    tcpClient.SendTimeout = 15;
+                    await Task.Run(() => tcpClient.Connect(Host, port));                    
+                }
                 return true;
             }
             catch (SocketException ex)
@@ -229,10 +229,28 @@ namespace network_util
                 {
                     return false;
                 }
+                if (ex.SocketErrorCode == SocketError.TimedOut)
+                {
+                    return false;
+                }
+                if (ex.SocketErrorCode == SocketError.AccessDenied)
+                {
+                    Console.WriteLine($"{port} - Acess Denied");
+                    return false;
+                }
+                if (ex.SocketErrorCode == SocketError.ConnectionAborted)
+                {
+                    Console.WriteLine($"{port} - Connection aborted");
+                    return false;                   
+                }
+                if (ex.SocketErrorCode == SocketError.HostUnreachable)
+                {
+                    return false;
+                }
 
                 //An error occurred when attempting to access the socket
-                Debug.WriteLine(ex.ToString());
-                Console.WriteLine(ex);
+                //Debug.WriteLine(ex.ToString());
+                //Console.WriteLine(ex);
             }
             finally
             {
@@ -263,14 +281,14 @@ namespace network_util
             string closedPorts = (_closedPorts.Count == 0)
                 ? "0"
                 : string.Join(",", _closedPorts);
-
+            if (_openPorts.Count != 0)
+            {
             Console.WriteLine();
-            Console.WriteLine("-----------------");
-            Console.WriteLine("Port Scan Results");
-            Console.WriteLine("-----------------");
-            Console.WriteLine();
+            Console.WriteLine("______________________________________");
+            Console.WriteLine($"Results for {Host}");
             Console.WriteLine($"Open Ports......: {openPorts}");
             Console.WriteLine();
+            }
         }
     }
 }
