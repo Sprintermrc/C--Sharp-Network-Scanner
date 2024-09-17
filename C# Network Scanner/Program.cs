@@ -1,4 +1,13 @@
-﻿using System;
+﻿//Медленно (сканирование первой тысячи портов на 255 айпишниках занимает ~2 минуты)
+//Само сканирование портов проходит быстро
+//пинг 255 айпишников занимает 11 секунд (50мс на каждый(можно настроить))
+//Значит - основные проблемы где-то в циклах где оно считает айпи для сканирования
+
+
+
+
+using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -88,7 +97,7 @@ namespace network_util
                 Console.Read();
                 return;                
             }
-            else if ( a == 4 )          //4 вариант Показать список открытых портов на {string_ip}
+            else if ( a == 4 )          //4 вариант Показать список открытых портов на {string_ip} локальном ip
             {
                 if (PingClass.BoolPing(string_ip, 1, 1000) == false)
                 {
@@ -119,7 +128,7 @@ namespace network_util
                 Console.WriteLine("Введите необходимый IP адресс и диапазон сканирования портов (1-n (максимум 65535) или * чтобы сканировать все порты):");
                 Console.WriteLine("Введите IP для сканирования: "); 
                 string scan_string_ip = Console.ReadLine();
-                if (PingClass.BoolPing(scan_string_ip, 1, 1000) == false)
+                if (PingClass.BoolPing(scan_string_ip, 1, 1000) == false)      // Проверяет стоит ли запрешенный хост
                 {
                     Console.WriteLine("Error: host is down");
                     Console.Read();
@@ -149,8 +158,13 @@ namespace network_util
                 Console.WriteLine("Введите конец диапазона IP для сканирования: "); 
                 string scan_string_ip_end =  Console.ReadLine();        
                 // string scan_string_ip_start = "172.29.9.1";
-                // string scan_string_ip_end = "172.29.9.6";     
+                // string scan_string_ip_end = "172.29.9.6";
+                Stopwatch swPingIPs = new Stopwatch();
+                swPingIPs.Start();     
                 AllPing.scan2(scan_string_ip_start, scan_string_ip_end);
+                swPingIPs.Stop();
+                TimeSpan ts6 = swPingIPs.Elapsed;
+                Console.WriteLine("Pinging elapsed in:" + ts6);
             }
             else if ( a == 7 )          //7 вариант Показать список адресов в указанном диапазоне с конкретным открытым портом
             {
@@ -170,8 +184,12 @@ namespace network_util
                     int scan_range_min = Int32.Parse(scan_range);
                     Console.WriteLine("Введите максимальное значение диапазона портов:");
                     string scan_range_max = Console.ReadLine();
-
-                    AllPing.scan2_spec_ports(scan_string_ip_start, scan_string_ip_end, scan_range_min.ToString(), scan_range_max);                    
+                        Stopwatch stopwatchScanSpecPorts = new Stopwatch();
+                        stopwatchScanSpecPorts.Start();
+                    AllPing.scan2_spec_ports(scan_string_ip_start, scan_string_ip_end, scan_range_min.ToString(), scan_range_max);
+                        stopwatchScanSpecPorts.Stop();
+                        TimeSpan ts = stopwatchScanSpecPorts.Elapsed;
+                        Console.WriteLine($"total Time elapsed: {ts}");                    
                 }
                 Console.Read();
                 return;

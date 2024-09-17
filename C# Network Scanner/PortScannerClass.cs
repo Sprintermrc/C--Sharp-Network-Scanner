@@ -283,10 +283,9 @@ namespace network_util
                 : string.Join(",", _closedPorts);
             if (_openPorts.Count != 0)
             {
-            Console.WriteLine();
-            Console.WriteLine("______________________________________");
             Console.WriteLine($"Results for {Host}");
             Console.WriteLine($"Open Ports......: {openPorts}");
+            Console.WriteLine("______________________________________");
             Console.WriteLine();
             }
         }

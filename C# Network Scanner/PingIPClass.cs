@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -11,6 +12,8 @@ namespace network_util
     {
         public static async void scan2(string start, string end)
         {
+            Stopwatch swPingIp = new Stopwatch();
+            swPingIp.Start();
             try 
             {
                 //Split IP string into a 4 part array
@@ -34,6 +37,9 @@ namespace network_util
                         if (ipAddress == endIPAddress) 
                         {
                             Console.WriteLine("fin");
+                                swPingIp.Stop();
+                                TimeSpan ts2 = swPingIp.Elapsed;
+                                Console.WriteLine("Ping IPs elapsed: " + ts2);
                             break;
                         }
 
@@ -41,7 +47,7 @@ namespace network_util
                         try 
                         {
                          //     reply = myPing.Send(ipAddress, 500); //Ping IP address with 500ms timeout
-                            if (PingClass.BoolPing(ipAddress.ToString(), 1, 250) == true)
+                            if (PingClass.BoolPing(ipAddress.ToString(), 1, 50) == true)
                             {
                                 //PortScannerClass.RunCustomPortScanAsync(ipAddress, 0, 1000);
                                 
@@ -78,11 +84,14 @@ namespace network_util
             {
 
             }
+
         }
 
 
        public static async void scan2_spec_ports(string start, string end, string scan_port_start, string scan_port_end)
         {
+            Stopwatch swPingIP_and_ScanSpecPorts = new Stopwatch();
+            swPingIP_and_ScanSpecPorts.Start();
             try 
             {
                 //Split IP string into a 4 part array
@@ -113,12 +122,12 @@ namespace network_util
                         try 
                         {
                          //     reply = myPing.Send(ipAddress, 500); //Ping IP address with 500ms timeout
-                            if (PingClass.BoolPing(ipAddress.ToString(), 1, 250) == true)
+                            if (PingClass.BoolPing(ipAddress.ToString(), 1, 50) == true)
                             {
                                 //PortScannerClass.RunCustomPortScanAsync(ipAddress, 0, 1000);
                                 
                                 PortScannerClass.PortScanCustom(ipAddress, Int32.Parse(scan_port_start), Int32.Parse(scan_port_end));
-                                
+
                                 try 
                                 {
                                     addr = IPAddress.Parse(ipAddress);
@@ -151,6 +160,9 @@ namespace network_util
             {
 
             }
+            swPingIP_and_ScanSpecPorts.Stop();
+            TimeSpan ts1 = swPingIP_and_ScanSpecPorts.Elapsed;
+            Console.WriteLine("Ping ip and scan spec ports elsaped" + ts1);
         }        
 
     }
