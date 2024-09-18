@@ -1,7 +1,7 @@
-﻿//Медленно (сканирование первой тысячи портов на 255 айпишниках занимает ~2 минуты)
+﻿//Медленно (сканирование первой тысячи портов на 255 айпишниках занимает 156 секунд) - теперь 50 секунд --- теперь 38 секунд ----и опять к 50 секундам...
 //Само сканирование портов проходит быстро
-//пинг 255 айпишников занимает 11 секунд (50мс на каждый(можно настроить))
-//Значит - основные проблемы где-то в циклах где оно считает айпи для сканирования
+//пинг 255 айпишников занимает 11 секунд (50мс на каждый(можно настроить))              --теперь на все 2.7 секунды
+//Значит - основные проблемы где-то в циклах где оно считает айпи для сканирования -- нет, на это уходит 0.00032 секунды
 
 
 
@@ -31,7 +31,7 @@ namespace network_util
             $"\n4 - Показать список открытых портов на {string_ip}" +
             "\n5 - Показать список открытых портов на выбранном IP" +
             "\n6 - Проверить активные IP адреса в указанном диапазоне" +
-            "\n7 - Показать список адресов в указанном диапазоне с конкретным открытым портом" +
+            "\n7 - Показать список адресов в указанном диапазоне с конкретными открытыми портами" +
             "\n Ваш выбор: ");
 
             int a = Int32.Parse(Console.ReadLine());
@@ -99,7 +99,7 @@ namespace network_util
             }
             else if ( a == 4 )          //4 вариант Показать список открытых портов на {string_ip} локальном ip
             {
-                if (PingClass.BoolPing(string_ip, 1, 1000) == false)
+                if (PingClass.BoolPing(string_ip, 1, 50) == false)
                 {
                     Console.WriteLine("Error: host is down");
                     Console.Read();
@@ -124,11 +124,11 @@ namespace network_util
             }
             else if ( a == 5)           //5 вариант Показать список открытых портов на выбранном IP
             {
-              
+               // Stopwatch sw5PingPortsIP = new Stopwatch();
                 Console.WriteLine("Введите необходимый IP адресс и диапазон сканирования портов (1-n (максимум 65535) или * чтобы сканировать все порты):");
                 Console.WriteLine("Введите IP для сканирования: "); 
                 string scan_string_ip = Console.ReadLine();
-                if (PingClass.BoolPing(scan_string_ip, 1, 1000) == false)      // Проверяет стоит ли запрешенный хост
+                if (PingClass.BoolPing(scan_string_ip, 1, 200) == false)      // Проверяет стоит ли запрешенный хост
                 {
                     Console.WriteLine("Error: host is down");
                     Console.Read();
@@ -145,7 +145,12 @@ namespace network_util
                     int scan_range_min = Int32.Parse(scan_range);
                     Console.WriteLine("Введите максимальное значение");
                     int scan_range_max = Int32.Parse(Console.ReadLine());
-                    PortScannerClass.PortScanCustom(scan_string_ip, scan_range_min, scan_range_max);     
+                 //   sw5PingPortsIP.Start();
+                    PortScannerClass.PortScanCustom(scan_string_ip, scan_range_min, scan_range_max);
+                 //   sw5PingPortsIP.Stop();
+                  //  TimeSpan ts5 = sw5PingPortsIP.Elapsed;
+                  //  Console.WriteLine("Func 5 elapsed in:" + ts5.ToString());
+     
                 }
                 Console.Read();
                 return;                           
@@ -159,14 +164,14 @@ namespace network_util
                 string scan_string_ip_end =  Console.ReadLine();        
                 // string scan_string_ip_start = "172.29.9.1";
                 // string scan_string_ip_end = "172.29.9.6";
-                Stopwatch swPingIPs = new Stopwatch();
-                swPingIPs.Start();     
+             //   Stopwatch swPingIPs = new Stopwatch();
+              //  swPingIPs.Start();     
                 AllPing.scan2(scan_string_ip_start, scan_string_ip_end);
-                swPingIPs.Stop();
-                TimeSpan ts6 = swPingIPs.Elapsed;
-                Console.WriteLine("Pinging elapsed in:" + ts6);
+              //  swPingIPs.Stop();
+              //  TimeSpan ts6 = swPingIPs.Elapsed;
+              //  Console.WriteLine("Pinging elapsed in:" + ts6);
             }
-            else if ( a == 7 )          //7 вариант Показать список адресов в указанном диапазоне с конкретным открытым портом
+            else if ( a == 7 )          //7 вариант Показать список адресов в указанном диапазоне с конкретными открытыми портами
             {
                 Console.WriteLine("Введите диапазон IP для сканирования ");
                 Console.WriteLine("Введите начало диапазона IP для сканирования: "); 
@@ -174,6 +179,8 @@ namespace network_util
                 Console.WriteLine("Введите конец диапазона IP для сканирования: "); 
                 string scan_string_ip_end =  Console.ReadLine();  
                 Console.WriteLine("Введите первое значение диапазона портов: "); 
+                Stopwatch swScanSpecPorts = new Stopwatch();
+
                 string scan_range = Console.ReadLine();
                 if (scan_range.Equals("*"))
                 {
@@ -184,13 +191,14 @@ namespace network_util
                     int scan_range_min = Int32.Parse(scan_range);
                     Console.WriteLine("Введите максимальное значение диапазона портов:");
                     string scan_range_max = Console.ReadLine();
-                        Stopwatch stopwatchScanSpecPorts = new Stopwatch();
-                        stopwatchScanSpecPorts.Start();
+                        swScanSpecPorts.Start();
                     AllPing.scan2_spec_ports(scan_string_ip_start, scan_string_ip_end, scan_range_min.ToString(), scan_range_max);
-                        stopwatchScanSpecPorts.Stop();
-                        TimeSpan ts = stopwatchScanSpecPorts.Elapsed;
-                        Console.WriteLine($"total Time elapsed: {ts}");                    
+                        swScanSpecPorts.Stop();
+                        TimeSpan ts7 = swScanSpecPorts.Elapsed;
+                        Console.WriteLine("func 7 Time elapsed:" + ts7);                    
+
                 }
+                
                 Console.Read();
                 return;
             }

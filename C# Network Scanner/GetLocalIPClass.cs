@@ -27,8 +27,8 @@ public static class PingClass
 
 public static bool BoolPing (string host, int attempts, int timeout)
    {
-        Stopwatch swBoolPing = new Stopwatch();
-        swBoolPing.Start();
+        //Stopwatch swBoolPing = new Stopwatch();
+       // swBoolPing.Start();
       System.Net.NetworkInformation.Ping  ping = new System.Net.NetworkInformation.Ping ();
 
       System.Net.NetworkInformation.PingReply  pingReply;
@@ -53,8 +53,8 @@ public static bool BoolPing (string host, int attempts, int timeout)
       }
 
       // Return false if we can't successfully ping the server after several attempts.
-      swBoolPing.Stop();
-      Console.WriteLine("BoolPing elapsed: " + swBoolPing.ElapsedMilliseconds);
+      //swBoolPing.Stop();
+     // Console.WriteLine("BoolPing elapsed: " + swBoolPing.ElapsedMilliseconds);
       return false;
    }
 }

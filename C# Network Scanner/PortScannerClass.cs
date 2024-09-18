@@ -218,7 +218,8 @@ namespace network_util
                 //await Task.Run(() => socket.ConnectAsync(Host, port));
                 using(TcpClient tcpClient = new TcpClient())
                 {   
-                    tcpClient.SendTimeout = 15;
+                    tcpClient.SendTimeout = 5;
+                    
                     await Task.Run(() => tcpClient.Connect(Host, port));                    
                 }
                 return true;
