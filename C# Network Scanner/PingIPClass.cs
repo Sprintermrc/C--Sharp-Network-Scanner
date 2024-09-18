@@ -127,7 +127,7 @@ namespace network_util
                             // using Ping ping = new();
                             // PingReply reply = await ping.SendPingAsync(ipAddress, 10);
                        // myPing = new Ping();
-                         if (PingClass.BoolPing(ipAddress.ToString(), 1, 10) == true)
+                         if (PingClass.BoolPing(ipAddress.ToString(), 1, 40) == true)
                          {
                             //reply = myPing.Send(ipAddress, 10);
 
