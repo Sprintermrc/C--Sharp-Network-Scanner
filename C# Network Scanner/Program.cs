@@ -196,7 +196,7 @@ namespace network_util
                         swScanSpecPorts.Stop();
                         TimeSpan ts7 = swScanSpecPorts.Elapsed;
                         Console.WriteLine("func 7 Time elapsed:" + ts7);                    
-
+                    
                 }
                 
                 Console.Read();

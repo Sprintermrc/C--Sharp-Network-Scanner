@@ -6,15 +6,15 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v8.0": {
-      "C# Network Scanner/1.0.0": {
+      "BlazorApp/1.0.0": {
         "runtime": {
-          "C# Network Scanner.dll": {}
+          "BlazorApp.dll": {}
         }
       }
     }
   },
   "libraries": {
-    "C# Network Scanner/1.0.0": {
+    "BlazorApp/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
