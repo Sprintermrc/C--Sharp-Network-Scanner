@@ -112,7 +112,14 @@ io.on('connection', (socket) => {
 //отправление запроса на сервер
 ////////////////////////////
 // https = require('https');
+//отправление запроса на сервер
+////////////////////////////
+// https = require('https');
 http = require('http');
+const data = {
+    mes: "gfhf"
+};
+
 
 const options = {
     hostname: '',
@@ -121,29 +128,27 @@ const options = {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',
+        'Content-Lenght': Buffer.byteLength(JSON.stringify(data))
     }
 }
 
-const data = JSON.stringify({
-    key: 'value',
-
-});
 
 
 const req = http.request(options, (res) => {
     console.log(`request status: ${res.statusCode}`);
-    let data = '';
+    let response = '';
+
     res.on('data', (chunk) => {
-        data += chunk;
+        response += chunk;
     });
     res.on('end', () => {
-        console.log(data);
+        console.log('server response: ', response);
     });
 });
 req.on('error', (error) => {
     console.log(error);
 });
-req.write(data);
+req.write(JSON.stringify(data));
 req.end();
 ///////////////////////////
 
