@@ -15,6 +15,21 @@ const io = new Server(server, {
 
 app.use(express.json());
 
+
+  const interfaces = require('os').networkInterfaces();
+  let ipAdress = '';
+  for (const networkInterface of Object.values(interfaces)) {
+      for (const adress of networkInterface) {
+          if (adress.family === 'IPv4' && !adress.internal) {
+              ipAdress = adress.address;
+              break;
+          }
+      }
+  }
+  const hostName = require('os').hostname();
+
+
+
 ////////////////////////////////////////////////
 //REST STUFF
 
@@ -37,17 +52,6 @@ app.use('/home', function (request, response) {
 
 
 app.get('/server-info', (req, res) => {
-    const hostName = require('os').hostname();
-    const interfaces = require('os').networkInterfaces();
-    let ipAdress = '';
-    for (const networkInterface of Object.values(interfaces)) {
-        for (const adress of networkInterface) {
-            if (adress.family === 'IPv4' && !adress.internal) {
-                ipAdress = adress.address;
-                break;
-            }
-        }
-    }
     res.json({
         hostname: hostName,
         ipAdress: ipAdress
@@ -57,7 +61,12 @@ app.get('/server-info', (req, res) => {
 
 app.post('/message', (req, res) => {
     const message = req.body.message;
-    io.emit('chat message', `Собеседник: ${message}`);
+    try{
+      io.emit('chat message', `${hostName} ((${ipAdress})): ${message}`);
+    }
+    catch {
+      io.emit('chat message', `Собеседник: ${message}`);
+    }
     if (!message) {
         return res.status(400).json({
         error: 'Message not found'});
@@ -70,9 +79,7 @@ app.post('/message', (req, res) => {
 ///////////////////////////////////////////////
 
 
-io.on('connection', (socket) => {
 
-});
 
 io.on('connection', (socket) => {
     console.log('a user connected');
@@ -132,45 +139,45 @@ const options = {
 http = require('http');
 
 const message = io.on('connection', (socket) =>{
-    socket.on('chat message', (msg) => {
-          
-      // const Message = json({
-      //   message: msg
-      // });
-  
-  
-    //  try {
-    //   request({ method:"POST", port:3300, body:Message});
-    //  }
-    //  catch{
-    //   console.log('error sending');
-    //  }
-  
-  
-        const data = JSON.stringify({
-          message: msg
-        });
-      const req = http.request(options, (res) => {
-  
-        console.log(`request status: ${res.statusCode}`);
-        let response = '';
-        let body = '';
-        res.on('data', (chunk) => {
-            response += chunk;
-        });
-        res.on('end', () => {
-            console.log('server response: ', response);
-        });
-  
+  socket.on('chat message', (msg) => {
+        
+    // const Message = json({
+    //   message: msg
+    // });
+
+
+  //  try {
+  //   request({ method:"POST", port:3400, body:Message});
+  //  }
+  //  catch{
+  //   console.log('error sending');
+  //  }
+
+
+      const data = JSON.stringify({
+        message: msg
       });
-      req.on('error', (error) => {
-          console.log(error);
+    const req = http.request(options, (res) => {
+
+      console.log(`request status: ${res.statusCode}`);
+      let response = '';
+      let body = '';
+      res.on('data', (chunk) => {
+          response += chunk;
       });
-      //console.log(`*-*-*-*-*-*-**-*-*-**-*-msg ${Message}`);
-      req.write(data);
-      req.end();
+      res.on('end', () => {
+          console.log('server response: ', response);
+      });
+
     });
+    req.on('error', (error) => {
+        console.log(error);
+    });
+    //console.log(`*-*-*-*-*-*-**-*-*-**-*-msg ${Message}`);
+    req.write(data);
+    req.end();
   });
+});
 
 
 

@@ -15,6 +15,21 @@ const io = new Server(server, {
 
 app.use(express.json());
 
+
+  const interfaces = require('os').networkInterfaces();
+  let ipAdress = '';
+  for (const networkInterface of Object.values(interfaces)) {
+      for (const adress of networkInterface) {
+          if (adress.family === 'IPv4' && !adress.internal) {
+              ipAdress = adress.address;
+              break;
+          }
+      }
+  }
+  const hostName = require('os').hostname();
+
+
+
 ////////////////////////////////////////////////
 //REST STUFF
 
@@ -37,17 +52,6 @@ app.use('/home', function (request, response) {
 
 
 app.get('/server-info', (req, res) => {
-    const hostName = require('os').hostname();
-    const interfaces = require('os').networkInterfaces();
-    let ipAdress = '';
-    for (const networkInterface of Object.values(interfaces)) {
-        for (const adress of networkInterface) {
-            if (adress.family === 'IPv4' && !adress.internal) {
-                ipAdress = adress.address;
-                break;
-            }
-        }
-    }
     res.json({
         hostname: hostName,
         ipAdress: ipAdress
@@ -57,8 +61,12 @@ app.get('/server-info', (req, res) => {
 
 app.post('/message', (req, res) => {
     const message = req.body.message;
-    io.emit('chat message', `Собеседник: ${message}`);
-
+    try{
+      io.emit('chat message', `${hostName} ((${ipAdress})): ${message}`);
+    }
+    catch {
+      io.emit('chat message', `Собеседник: ${message}`);
+    }
     if (!message) {
         return res.status(400).json({
         error: 'Message not found'});
