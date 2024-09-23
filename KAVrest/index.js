@@ -57,6 +57,7 @@ app.get('/server-info', (req, res) => {
 
 app.post('/message', (req, res) => {
     const message = req.body.message;
+    io.emit('chat message', `Собеседник: ${message}`);
     if (!message) {
         return res.status(400).json({
         error: 'Message not found'});
@@ -69,7 +70,9 @@ app.post('/message', (req, res) => {
 ///////////////////////////////////////////////
 
 
+io.on('connection', (socket) => {
 
+});
 
 io.on('connection', (socket) => {
     console.log('a user connected');
