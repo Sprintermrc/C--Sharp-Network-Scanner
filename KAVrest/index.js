@@ -1,15 +1,15 @@
+const bodyParser = require('body-parser');
+const { json } = require('body-parser');
 const express = require('express');
 const { createServer, request } = require('http');
 const { join } = require('path');
 const { Server } = require('socket.io');
 
 
-
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
     connectionStateRecovery: {},
-
 });
 
 
@@ -57,7 +57,6 @@ app.get('/server-info', (req, res) => {
 
 app.post('/message', (req, res) => {
     const message = req.body.message;
-    console.log(`message:${message}`);
     if (!message) {
         return res.status(400).json({
         error: 'Message not found'});
@@ -68,6 +67,8 @@ app.post('/message', (req, res) => {
 
 //END OF REST STUFF
 ///////////////////////////////////////////////
+
+
 
 
 io.on('connection', (socket) => {
@@ -82,7 +83,7 @@ io.on('connection', (socket) => {
 
 io.on('connection', (socket) => {
     socket.on('chat message', (msg) => {
-        console.log('message: ' + msg);
+        console.log('log: chat message: ' + msg);
     });
 });
 
@@ -109,16 +110,8 @@ io.on('connection', (socket) => {
 });
 
 
-//отправление запроса на сервер
+//отправление запроса c сообщением на сервер
 ////////////////////////////
-// https = require('https');
-//отправление запроса на сервер
-////////////////////////////
-// https = require('https');
-http = require('http');
-const data = {
-    mes: "gfhf"
-};
 
 
 const options = {
@@ -127,29 +120,59 @@ const options = {
     path: '/message',
     method: 'POST',
     headers: {
-        'Content-Type': 'application/json',
-        'Content-Lenght': Buffer.byteLength(JSON.stringify(data))
+        'Content-Type': 'application/json'
+        //'Content-Lenght': Buffer.byteLength(JSON.stringify(data))    
     }
 }
 
 
+http = require('http');
 
-const req = http.request(options, (res) => {
-    console.log(`request status: ${res.statusCode}`);
-    let response = '';
+const message = io.on('connection', (socket) =>{
+    socket.on('chat message', (msg) => {
+          
+      // const Message = json({
+      //   message: msg
+      // });
+  
+  
+    //  try {
+    //   request({ method:"POST", port:3300, body:Message});
+    //  }
+    //  catch{
+    //   console.log('error sending');
+    //  }
+  
+  
+        const data = JSON.stringify({
+          message: msg
+        });
+      const req = http.request(options, (res) => {
+  
+        console.log(`request status: ${res.statusCode}`);
+        let response = '';
+        let body = '';
+        res.on('data', (chunk) => {
+            response += chunk;
+        });
+        res.on('end', () => {
+            console.log('server response: ', response);
+        });
+  
+      });
+      req.on('error', (error) => {
+          console.log(error);
+      });
+      //console.log(`*-*-*-*-*-*-**-*-*-**-*-msg ${Message}`);
+      req.write(data);
+      req.end();
+    });
+  });
 
-    res.on('data', (chunk) => {
-        response += chunk;
-    });
-    res.on('end', () => {
-        console.log('server response: ', response);
-    });
-});
-req.on('error', (error) => {
-    console.log(error);
-});
-req.write(JSON.stringify(data));
-req.end();
+
+
+
+
 ///////////////////////////
 
 
@@ -164,33 +187,14 @@ req.end();
 //         });
 //     });
 // });
-
+// const hostname = '172.29.9.90';
+// const port = 3300;
+// const server = http.createServer((req, res) => {
+//     res.statusCode = 200;
+//     res.setHeader('Content-Type', 'text/plain');
+//     res.end('dsgfds');
+// });
 
 server.listen(3300, () => {
-    console.log('server running at http://localhost:3300');
-});
-
-
-'use strict';
-
-const { networkInterfaces } = require('os');
-const { hostname } = require('os');
-
-const nets = networkInterfaces();
-const results = Object.create(null);
-
-
-io.on('connection', (socket) => {
-    for (const name of Object.keys(nets)) {
-        for (const net of nets[name]) {
-            const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
-            if (net.family === familyV4Value && !net.internal) {
-                if (!results[name]) {
-                    results[name] = [];
-                }
-                results[name].push(net.address);
-                io.emit('chat message', results[name]);
-            }
-        }
-    }
+    console.log('----------------1 server running at http://localhost:3300');
 });
