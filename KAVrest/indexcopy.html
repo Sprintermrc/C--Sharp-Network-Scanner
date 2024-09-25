@@ -26,11 +26,12 @@
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        const funnybtn = document.getElementById('funny-btn');
+        const toggleButton = document.getElementById('toggle-btn');
 
-      const funnybtn = document.getElementById('funny-btn');
-      const toggleButton = document.getElementById('toggle-btn');
-
-
+        funnybtn.addEventListener('Click', (e) =>{
+          test();
+        });
 
         toggleButton.addEventListener('click', (e) => {
           e.preventDefault();
@@ -51,7 +52,7 @@
       </script>
       <script>
         const socket = io();
-
+        test();
         const form = document.getElementById('form');
         const input = document.getElementById('input');
         const messages = document.getElementById('messages');
@@ -75,6 +76,7 @@
 
             }
             else {
+              console.log('sdfsdfsdf', msg);
               sendmsg(msg);
             }
             });
@@ -92,8 +94,8 @@
             const data = JSON.stringify({
               message: msg
             });
-            fetch('http://localhost:3400/message', {
-            //fetch('http://172.29.13.124:5273/message', {
+            //fetch('http://localhost:3200/message', {
+            fetch('http://172.29.13.124:5273/message', {
 
              method: 'POST',
            //  host: 'localhost',
@@ -117,29 +119,35 @@
            .catch(error => {console.error('error: ', error);});
           }
         }
-         function test(){
-          const startTime = Date.now();
-          const promises = [];
-          const jsondata = JSON.stringify({
-            message: 'BEHOLD< 10000 POST REQUESTS'
-          })          
-          for (let i = 0; i < 5000; i++)
-          {
-            promises.push(new Promise((resolve, reject)=> {
-              
-              sendmsg(jsondata);
-            }));
-
-          }
-            Promise.all(promises);
-            const endTime = Date.now();
-            const elapsedTime = endTime - startTime;
-            console.log('1000 POST запросов заняла: ', elapsedTime);
-            console.error(elapsedTime, 'milisecond elapsed ');
-        }
-        //test();
 
         
+        async function test(){
+          const startTime = Date.now();
+          const promises = [];
+          for (let i = 0; i < 10000; i++)
+          {
+            promises.push(new Promise((resolve, reject)=> {
+              const options = {
+                hostname: '',
+                port:'',
+                path: '/message',
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              };
+            }));
+            const jsondata = JSON.stringify({
+              message: 'BEHOLD, 10000 POST REQUESTS'
+            })
+            sendmsg(jsondata);
+          }
+        }
+        await Promise.all(promises);
+        const endTime = Date.now();
+        const elapsedTime = endTime - startTime;
+        Console.log('1000 POST запросов заняла: ', elapsedTime);
+
     </script>
   </body>
 </html>

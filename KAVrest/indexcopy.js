@@ -1,11 +1,17 @@
-const bodyParser = require('body-parser');
-const { json } = require('body-parser');
-const express = require('express');
-const { createServer, request } = require('http');
-const { join } = require('path');
-const { Server } = require('socket.io');
 
+import cors from 'cors';
+import { Server } from 'socket.io';
+import { join } from 'path';
+import express from 'express';
+import bodyParser from 'body-parser';
+//import { json } from 'body-parser';
+import { createServer, request } from 'http';
+import require from 'express';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
@@ -14,21 +20,14 @@ const io = new Server(server, {
 
 
 app.use(express.json());
-
-
-  const interfaces = require('os').networkInterfaces();
-  let ipAdress = '';
-  for (const networkInterface of Object.values(interfaces)) {
-      for (const adress of networkInterface) {
-          if (adress.family === 'IPv4' && !adress.internal) {
-              ipAdress = adress.address;
-              break;
-          }
-      }
-  }
-  const hostName = require('os').hostname();
-
-
+// app.use(cors());
+// app.use((req, res, next) => {
+//     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3200');
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+//     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+//     res.setHeader('Access-Control-Allow-Credentials', true);
+//     next();
+//   });
 
 ////////////////////////////////////////////////
 //REST STUFF
@@ -36,7 +35,7 @@ app.use(express.json());
 
 
 app.get('/chat', (req, res) => {
-    res.sendFile(join(__dirname, 'index.html'));
+    res.sendFile(join(__dirname, 'indexvl.html'));
 });
 
 
@@ -51,7 +50,18 @@ app.use('/home', function (request, response) {
 });
 
 
-app.get('/server-info', (req, res) => {
+app.get('/name', (req, res) => {
+    const hostName = require('os').hostname();
+    const interfaces = require('os').networkInterfaces();
+    let ipAdress = '';
+    for (const networkInterface of Object.values(interfaces)) {
+        for (const adress of networkInterface) {
+            if (adress.family === 'IPv4' && !adress.internal) {
+                ipAdress = adress.address;
+                break;
+            }
+        }
+    }
     res.json({
         hostname: hostName,
         ipAdress: ipAdress
@@ -61,18 +71,22 @@ app.get('/server-info', (req, res) => {
 
 app.post('/message', (req, res) => {
     const message = req.body.message;
-    try{
-      io.emit('chat message', `${hostName} ((${ipAdress})): ${message}`);
-    }
-    catch {
-      io.emit('chat message', `Собеседник: ${message}`);
-    }
+    // if (message != null && message != '')
+    // {
+    io.emit('chat message', `Собеседник: ${message}`);
     if (!message) {
         return res.status(400).json({
         error: 'Message not found'});
        }
     console.log('Recieved Message:', message);
+    // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3200');
+    // res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    // res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    // res.setHeader('Access-Control-Allow-Credentials', true);
     res.status(200).json({ message: 'Message recieved' });
+    res.sendStatus(200).json({success: true});
+
+   // }
 });
 
 //END OF REST STUFF
@@ -124,60 +138,47 @@ io.on('connection', (socket) => {
 ////////////////////////////
 
 
-const options = {
-    hostname: '',
-    port: 3300,
-    path: '/message',
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-        //'Content-Lenght': Buffer.byteLength(JSON.stringify(data))    
-    }
-}
+// const options = {
+//     hostname: '',
+//     port: 3300,
+//     path: '/message',
+//     method: 'POST',
+//     headers: {
+//         'Content-Type': 'application/json'
+//     }
+// }
 
 
-http = require('http');
+// http = require('http');
 
-const message = io.on('connection', (socket) =>{
-  socket.on('chat message', (msg) => {
-        
-    // const Message = json({
-    //   message: msg
-    // });
+// const message = io.on('connection', (socket) =>{
+//   socket.on('chat message', (msg) => {
 
 
-  //  try {
-  //   request({ method:"POST", port:3300, body:Message});
-  //  }
-  //  catch{
-  //   console.log('error sending');
-  //  }
+    //   const data = JSON.stringify({
+    //     message: msg
+    //   });
+//     const req = http.request(options, (res) => {
 
+//       console.log(`request status: ${res.statusCode}`);
+//       let response = '';
+//       let body = '';
+//       res.on('data', (chunk) => {
+//           response += chunk;
+//       });
+//       res.on('end', () => {
+//           console.log('server response: ', response);
+//       });
 
-      const data = JSON.stringify({
-        message: msg
-      });
-    const req = http.request(options, (res) => {
-
-      console.log(`request status: ${res.statusCode}`);
-      let response = '';
-      let body = '';
-      res.on('data', (chunk) => {
-          response += chunk;
-      });
-      res.on('end', () => {
-          console.log('server response: ', response);
-      });
-
-    });
-    req.on('error', (error) => {
-        console.log(error);
-    });
-    //console.log(`*-*-*-*-*-*-**-*-*-**-*-msg ${Message}`);
-    req.write(data);
-    req.end();
-  });
-});
+//     });
+//     req.on('error', (error) => {
+//         console.log(error);
+//     });
+//     //console.log(`*-*-*-*-*-*-**-*-*-**-*-msg ${Message}`);
+//     req.write(data);
+//     req.end();
+//   });
+// });
 
 
 
@@ -205,6 +206,6 @@ const message = io.on('connection', (socket) =>{
 //     res.end('dsgfds');
 // });
 
-server.listen(3400, () => {
-    console.log('----------------2 COPY server running at http://localhost:3400');
+server.listen(3300, () => {
+    console.log('----------------2 server running at http://localhost:3300');
 });

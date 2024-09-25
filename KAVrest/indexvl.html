@@ -92,7 +92,7 @@
             const data = JSON.stringify({
               message: msg
             });
-            fetch('http://localhost:3400/message', {
+            fetch('http://localhost:3200/message', {
             //fetch('http://172.29.13.124:5273/message', {
 
              method: 'POST',
@@ -137,7 +137,7 @@
             console.log('1000 POST запросов заняла: ', elapsedTime);
             console.error(elapsedTime, 'milisecond elapsed ');
         }
-        //test();
+        test();
 
         
     </script>

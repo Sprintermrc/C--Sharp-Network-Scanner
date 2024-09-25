@@ -35,7 +35,7 @@ app.use(express.json());
 
 
 app.get('/chat', (req, res) => {
-    res.sendFile(join(__dirname, 'index.html'));
+    res.sendFile(join(__dirname, 'indexvl.html'));
 });
 
 
@@ -205,6 +205,6 @@ io.on('connection', (socket) => {
 //     res.end('dsgfds');
 // });
 
-server.listen(3200, () => {
-    console.log('----------------3 server running at http://localhost:3200');
+server.listen(3400, () => {
+    console.log('----------------3 server running at http://localhost:3400');
 });
