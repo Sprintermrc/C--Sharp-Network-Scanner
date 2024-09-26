@@ -1,5 +1,3 @@
-using System;
-using System.Globalization;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -48,7 +46,6 @@ public static void ShowNetworkInterfaces()
             versions += "IPv6";
         }
         Console.WriteLine("  IP version .............................. : {0}", versions);
-      //  ShowIPAddresses(properties);
 
         // The following information is not useful for loopback adapters.
         if (adapter.NetworkInterfaceType == NetworkInterfaceType.Loopback)
@@ -70,20 +67,16 @@ public static void ShowNetworkInterfaces()
                 if (winsServers.Count > 0)
                 {
                     label = "  WINS Servers ............................ :";
-                   // ShowIPAddresses(label, winsServers);
                 }
             }
         }
 
         Console.WriteLine("  DNS enabled ............................. : {0}",
             properties.IsDnsEnabled);
-   //     Console.WriteLine("  Dynamically configured DNS .............. : {0}",
-     //       properties.IsDynamicDnsEnabled);
         Console.WriteLine("  Receive Only ............................ : {0}",
             adapter.IsReceiveOnly);
         Console.WriteLine("  Multicast ............................... : {0}",
             adapter.SupportsMulticast);
-      //  ShowInterfaceStatistics(adapter);
 
         Console.WriteLine();
     }

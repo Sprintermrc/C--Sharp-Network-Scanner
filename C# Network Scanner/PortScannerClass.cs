@@ -1,15 +1,11 @@
 //Весь этот класс делает следующее:
 // Принимает айпи и диапазон портов, затем берет и на каждый порт открывает ~сокет~ (зачеркнуто) tcpClient с попыткой присоединиться.
-//Соответственно если соединение успешо - возвращает true и выводит порт в консоль, если нет - ловит ошибку SocketError.ConnectionRefused, возвращает false и ничего не делает (можно тоже выводить в консоль)
+//Соответственно если соединение успешо - возвращает true и выводит порт в консоль, если нет - ловит ошибку SocketError.ConnectionRefused, возвращает false 
+// и ничего не делает (можно тоже выводить в консоль)
 
 
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Net.Sockets;
-using System.Runtime.CompilerServices;
 
 namespace network_util
 {
@@ -211,11 +207,6 @@ namespace network_util
 
             try
             {
-                // make a TCP based socket
-               // socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-                // connect
-                //await Task.Run(() => socket.ConnectAsync(Host, port));
                 using(TcpClient tcpClient = new TcpClient())
                 {   
                     tcpClient.SendTimeout = 5;

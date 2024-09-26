@@ -1,12 +1,20 @@
-﻿//Медленно (сканирование первой тысячи портов на 255 айпишниках занимает 156 секунд) - теперь 50 секунд --- теперь 38 секунд ----и опять к 50 секундам...
-//Само сканирование портов проходит быстро
-//пинг 255 айпишников занимает 11 секунд (50мс на каждый(можно настроить))              --теперь на все 2.7 секунды
-//Значит - основные проблемы где-то в циклах где оно считает айпи для сканирования -- нет, на это уходит 0.00032 секунды
+﻿
+// Использованные в программе методы: 
+//      SNI.ShowNetworkInterfaces() -- Находит и отписывает в консоль все сетевые интерфейсы устройства
+//      SNI.GetSubnetMask(ip adress) -- возвращает IPv4 маску адреса (не используется)
+//      PingClass.BoolPing(string host, attempts , timeout) -- возвращает true если пинг успешен
+//      PortScannerClass.PortScanCustom(string host, scan_range_min, scan_range_max) -- сканирует 
+// на выбранном хосте порты из заданного диапазона и выводит результаты в консоль
+//      AllPing.scan2(scan_string_ip_start, scan_string_ip_end) -- производит пинг всех адресов в указанном диапазоне и выписывает в консоль отвечающие сервера 
+//      AllPing.scan2_spec_ports(scan_string_ip_start, scan_string_ip_end, scan_range_min.ToString(), scan_range_max) -- производит пинг 
+// всех адресов в указанном диапазоне и выписывает в консоль отвечающие сервера, для каждого выписанного сервера проводит сканирование портов в указанном диапазоне
 
 
 
 
-using System;
+
+
+
 using System.Diagnostics;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -16,6 +24,7 @@ namespace network_util
 {
     class Program
     {
+        
         static void Main(string[] args)
         {
             string string_ip = getLocalIPClass.GetLocalIPAddress();
@@ -35,7 +44,7 @@ namespace network_util
             "\n Ваш выбор: ");
 
             int a = Int32.Parse(Console.ReadLine());
-            if ( a == 1 ) // 1 вариант Показать все активные соединения
+            if ( a == 1 )                                                                                   // 1 вариант Показать все активные соединения
             {
                 IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
                 TcpConnectionInformation[] connections = properties.GetActiveTcpConnections();
@@ -45,14 +54,13 @@ namespace network_util
                     Console.Write("Local endpoint: {0} ", t.LocalEndPoint);
                     Console.Write("Remote endpoint: {0} ", t.RemoteEndPoint);
                     Console.WriteLine("State: {0}", t.State);
-                    //Console.WriteLine($"Ping success : {PingClass.BoolPing(t.RemoteEndPoint.ToString(), 1, 1)}");
                 }
                 Console.WriteLine("");
                 Console.Read();
                 return;
             }
 
-            else if ( a == 2 )  //2 вариант Показать список всех активных сетевых интерфейсов
+            else if ( a == 2 )                                                                              //2 вариант Показать список всех активных сетевых интерфейсов
             {    
 
                 Console.WriteLine("Список сетевых интерфейсов:");
@@ -83,21 +91,19 @@ namespace network_util
                 for (int i = 0; i < ipAdresses.Count; i++)
                 {
                     Console.WriteLine(ipAdresses[i]);
-                    //ipScanner.act(ipAdresses[i], "255.255.255.0");
                 }
 
                 Console.WriteLine("--------------------------------");
                 Console.Read();
                 return;
             }
-            else if ( a == 3 )          //3 вариант Показать список всех сетевых интерфейсов (2 вариант)
+            else if ( a == 3 )                                                                                  //3 вариант Показать список всех сетевых интерфейсов (2 вариант)
             {
-                //  ipScanner.act();
                 SNI.ShowNetworkInterfaces();
                 Console.Read();
                 return;                
             }
-            else if ( a == 4 )          //4 вариант Показать список открытых портов на {string_ip} локальном ip
+            else if ( a == 4 )                                                                                  //4 вариант Показать список открытых портов на {string_ip} локальном ip
             {
                 if (PingClass.BoolPing(string_ip, 1, 50) == false)
                 {
@@ -122,7 +128,7 @@ namespace network_util
                 Console.Read();
                 return;                
             }
-            else if ( a == 5)           //5 вариант Показать список открытых портов на выбранном IP
+            else if ( a == 5)                                                                                     //5 вариант Показать список открытых портов на выбранном IP
             {
                // Stopwatch sw5PingPortsIP = new Stopwatch();
                 Console.WriteLine("Введите необходимый IP адресс и диапазон сканирования портов (1-n (максимум 65535) или * чтобы сканировать все порты):");
@@ -145,33 +151,21 @@ namespace network_util
                     int scan_range_min = Int32.Parse(scan_range);
                     Console.WriteLine("Введите максимальное значение");
                     int scan_range_max = Int32.Parse(Console.ReadLine());
-                 //   sw5PingPortsIP.Start();
                     PortScannerClass.PortScanCustom(scan_string_ip, scan_range_min, scan_range_max);
-                 //   sw5PingPortsIP.Stop();
-                  //  TimeSpan ts5 = sw5PingPortsIP.Elapsed;
-                  //  Console.WriteLine("Func 5 elapsed in:" + ts5.ToString());
-     
                 }
                 Console.Read();
                 return;                           
             }
-            else if( a == 6 )           //6 вариант  Проверить активные IP адреса в указанном диапазоне
+            else if( a == 6 )                                                                                       //6 вариант  Проверить активные IP адреса в указанном диапазоне
             {
                 Console.WriteLine("Введите диапазон IP для сканирования ");
                 Console.WriteLine("Введите начало диапазона IP для сканирования: "); 
                 string scan_string_ip_start = Console.ReadLine();
                 Console.WriteLine("Введите конец диапазона IP для сканирования: "); 
                 string scan_string_ip_end =  Console.ReadLine();        
-                // string scan_string_ip_start = "172.29.9.1";
-                // string scan_string_ip_end = "172.29.9.6";
-             //   Stopwatch swPingIPs = new Stopwatch();
-              //  swPingIPs.Start();     
                 AllPing.scan2(scan_string_ip_start, scan_string_ip_end);
-              //  swPingIPs.Stop();
-              //  TimeSpan ts6 = swPingIPs.Elapsed;
-              //  Console.WriteLine("Pinging elapsed in:" + ts6);
             }
-            else if ( a == 7 )          //7 вариант Показать список адресов в указанном диапазоне с конкретными открытыми портами
+            else if ( a == 7 )                                                                                      //7 вариант Показать список адресов в указанном диапазоне с конкретными открытыми портами
             {
                 Console.WriteLine("Введите диапазон IP для сканирования ");
                 Console.WriteLine("Введите начало диапазона IP для сканирования: "); 

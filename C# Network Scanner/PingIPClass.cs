@@ -1,9 +1,6 @@
-using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Net.Sockets;
 
 
 namespace network_util
@@ -24,7 +21,6 @@ namespace network_util
                 int[] endIP = Array.ConvertAll<string, int>(endIPString, int.Parse);
                 int count = 0; //Count the number of successful pings
                 Ping myPing;
-                //PingReply reply;
                 IPAddress addr;
                 IPHostEntry host;
                 var tcs = new TaskCompletionSource<int>();
@@ -33,7 +29,6 @@ namespace network_util
                     for (int y = startIP[3]; y <= 255; y++) { //4th octet loop
                         string ipAddress = startIP[0] + "." + startIP[1] + "." + i + "." + y; //Convert IP array back into a string
                         string endIPAddress = endIP[0] + "." + endIP[1] + "." + endIP[2] + "." + (endIP[3] + 1); // +1 is so that the scanning stops at the correct range
-                        // Console.WriteLine("---------------" + ipAddress.ToString() + " --------------------");
                         //If current IP matches final IP in range, break
                         if (ipAddress == endIPAddress) 
                         {
@@ -47,11 +42,8 @@ namespace network_util
                         myPing = new Ping();
                         try 
                         {
-                         //     reply = myPing.Send(ipAddress, 500); //Ping IP address with 500ms timeout
                             if (PingClass.BoolPing(ipAddress.ToString(), 1, 10) == true)
-                            {
-                                //PortScannerClass.RunCustomPortScanAsync(ipAddress, 0, 1000);
-                                
+                            {                                
                                 Console.WriteLine(ipAddress.ToString() + " is UP");
                                 try 
                                 {
@@ -116,34 +108,24 @@ namespace network_util
                     { //4th octet loop
                         string ipAddress = startIP[0] + "." + startIP[1] + "." + i + "." + y; //Convert IP array back into a string
                         string endIPAddress = endIP[0] + "." + endIP[1] + "." + endIP[2] + "." + (endIP[3] + 1); // +1 is so that the scanning stops at the correct range
-                        // Console.WriteLine("---------------" + ipAddress.ToString() + " --------------------");
                         //If current IP matches final IP in range, break
                         if (ipAddress == endIPAddress) 
                         {
                             Console.WriteLine("fin");
                             break;
                         }
-                      
-                            // using Ping ping = new();
-                            // PingReply reply = await ping.SendPingAsync(ipAddress, 10);
-                       // myPing = new Ping();
                          if (PingClass.BoolPing(ipAddress.ToString(), 1, 40) == true)
                          {
                             //reply = myPing.Send(ipAddress, 10);
 
                             try 
-                            {
-
-                                //PortScannerClass.RunCustomPortScanAsync(ipAddress, 0, 1000);
-                                
+                            {                                
                                 PortScannerClass.PortScanCustom(ipAddress, Int32.Parse(scan_port_start), Int32.Parse(scan_port_end));
-
                                 try 
                                 {
                                     addr = IPAddress.Parse(ipAddress);
                                     host = Dns.GetHostEntry(addr);
                                     Console.WriteLine(ipAddress.ToString() + " " + host.HostName.ToString() + " is Up");
-                                    
                                     //  listVAddr.Items.Add(new ListViewItem(new String[] { ipAddress, host.HostName, "Up" })); //Log successful pings
                                     count++;
                                 }
